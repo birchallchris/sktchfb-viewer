@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+	<meta charset="UTF-8">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="profile" href="https://gmpg.org/xfn/11"> 
+
+	<meta name='robots' content='noindex, nofollow' />
+	
+    <!-- ************************************** START Sketchfab CSS Code*********************** -->
+    <!-- This is optional content - customise the size of the canvas in your page using width and height -->
+    <!-- ********************************************************************************** -->
+	<style>
+        .sketchfab-embed-wrapper iframe {
+            width: 100%;
+            height: 600px;
+        } 
+    </style>
+    <!-- ************************************** END Sketchfab CSS Code*****************************-->
+    <!-- **************************************************************************************-->
+</head>
+	
+<body>
+
+   <!-- ************************************** START Sketchfab HTML Code*********************** -->
+    <!-- ********************************************************************************** -->
+	<div class="sketchfab-embed-wrapper">
+	    <!-- Insert an empty iframe with attributes -->
+	    <div class="iframe-container" style="width:50vw;"><!-- width hack in div: style="width:50vw;"-->
+	        <iframe src="" id="api-frame" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+	    </div>
+	    <div class="controls" id="controls">
+	
+	    </div>
+	</div>
+    <!-- ************************************** END Sketchfab HTML Code*****************************-->
+    <!-- **************************************************************************************-->
+
+     <!-- ************************************** Add in the Sketchfab API link (code written for this version) *********************** -->
+	<script type="text/javascript" src="https://static.sketchfab.com/api/sketchfab-viewer-1.12.1.js"></script>
+
+
+    <!-- ************************************** START Sketchfab JavaScript API Code *********************** -->
+    <!-- ********************************************************************************** -->
+	<script>
+        // Sketchfab Viewer API: Camera Limits + Annotations
+        const version = '1.12.1';
+        const uid = '';
+        const iframe = document.getElementById('api-frame');
+        const client = new window.Sketchfab(version, iframe);
+        let api;
+        
+        const error = () => {
+            window.console.error('Sketchfab API error');
+        };
+        
+        // Custom camera logs (can be taken from Sketchfab 3D settings)
+            // experiment with the values to change the camera positiion and constraints
+        const cameraData = {
+            "useCameraConstraints": true,
+            "usePanConstraints": false,
+            "useZoomConstraints": true,
+            "usePitchConstraints": true,
+            "useYawConstraints": true,
+            "zoomIn": 1,
+            "zoomOut": 1.5,
+            "left": 1,
+            "right": -2.6,
+            "up": 0.5,
+            "down": -0.1
+        }; 
+        /*
+			"fov":90,
+            "position": [-0.732,-2.5255,1.3335],
+            "target": [1.8498,-0.5826,0.055122],
+            "nearFarRatio": 0.005,
+        */
+
+        // ADD ANNOTATIONS TO THE SCENE
+        // annotations are held in an array as below, with positions, titles and text. 
+        // Number of positions is limited by account type
+        // This example shows sample annotations for one room - bedroom - in a two-room model
+		var annotationsBed = [
+			{
+				ScenePosition: [-3.432362533111573, -0.6721331197674899, 1.7418435055047579 ],
+				WorldPosition: [ -3.432362533111573, -0.6721330147153566, 1.7418435674438135],
+				eye: [ 1.5485448489601588, -0.06973765649034977, 1.1791861077608132],
+				target: [ 1.0486203286387108, -0.039091386162281076, 1.143355269809609],
+				title: "Clock",
+				text: "A clock helps keep track of medicine times and adds a homely touch to our bedrooms. Click here to donate a clock."
+			},
+			{
+				ScenePosition: [ -0.7999274985920004, 0.24795668254285852,1.0745196860567672],
+				WorldPosition: [ -0.7999274985920004,  0.24795678759499196, 1.0745197479958228],
+				eye: [ 1.637235246483538, -1.090440793950446, 1.0361294837581811],
+				target: [ 1.0486203286387108, -0.039091386162281076, 1.143355269809609],
+				title: "Houseplant",
+				text: "Houseplants add a vibrant finishing touch to our bedrooms, creating a calm and relaxing environment for families. Click here to donate a plant."
+			},
+			{
+				ScenePosition: [1.160243888495911,-1.8301021422434838,0.8177690263968755],
+				WorldPosition: [1.160243888495911,-1.8301020371913503,0.8177690883359309],
+				eye: [-1.5,-1.4470193369035562,1.4769501952631743],
+				target: [1.048620328638711,-1.03909138616228114,1.143355269809609],
+				title: "Blankets",
+				text: "We provide a home-from-home for families. Cosy blankets create special moments, snuggling together. Click here to donate a blanket."
+			},
+			{
+				ScenePosition: [1.2021799749472186,-2.4160291322762935,0.7652119222232767],
+				WorldPosition: [1.2021799749472186,-2.41602902722416,0.765211984162332],
+				eye: [-1.5,-1.4470193369035562,1.4769501952631743],
+				target: [1.048620328638711,-1.03909138616228114,1.143355269809609],
+				title: "Sheets",
+				text: "That fresh sheet feeling makes all the difference to help you feel comfortable, for a good night&apos;s sleep. Click here to donate."
+			},
+			{
+				ScenePosition: [1.2,-2.8,0.8],
+				WorldPosition: [1.2,-2.8,0.8],
+				eye: [-1.5,-1.4470193369035562,1.4769501952631743],
+				target: [1.048620328638711,-1.03909138616228114,1.143355269809609],
+				title: "Pillows",
+				text: "Comfy pillows are a must. Click here to donate pillows for our rooms."
+			}
+		];
+        
+        // You can have more than one array of annotations and turn them on and off.
+        // Here, a second array holds sample annotations for a second room - bathroom - in a two-room model
+		var annotationsBath = [{
+				ScenePosition: [-2.690896892837586,2.1455381515783976,0.34493828628613865],
+				WorldPosition: [-2.690896892837586,2.145538256630531,0.34493834822519465],
+				eye: [-8.2, 0.92, 1],
+				target: [-2, 2.5, 1.0556],
+				title: "Bath toys",
+				text: "Baths are a playful and sensory experience. Gift some extra bathtime fun by donating. Click here to donate."
+			},
+			{
+				ScenePosition: [-1.216877443679384,2.9492898654270907,0.5818034197687563],
+				WorldPosition: [-1.216877443679384,2.9492899704792244,0.5818034817078124],
+				eye: [-8.2, 0.92, 1],
+				target: [-2, 2.5, 1.0556],
+				title: "Hand towel",
+				text: "We provide towels in our rooms so that you have one less thing to think about when you come to stay. Click here to donate hand towels."
+			}
+		];
+        
+        //SCRIPT TO SET UP THE VIEWER IN THE PAGE
+        const success = apiClient => {
+            api = apiClient;
+            api.start();
+            api.addEventListener('viewerready', function() {
+                window.console.log('viewer ready');
+
+                //add the button
+                initGui("ensuite bathroom");
+
+                //add camera constraints
+                cameraLimits(cameraData); 
+
+                // remove any annotations (inc those set in sketchfab) and set view on bedroom
+				switchView('bedroom');
+                
+            });
+        };
+        
+        // Settings for the viewer defined here
+        client.init(uid, {
+            annotation: 0, // Usage: Setting to [1 to 100] will automatically load that annotation when the viewer starts.
+            annotations_visible: 1, // Usage: Setting to 0 will hide annotations by default.
+            autospin: 0, // Usage: Setting to any other number will cause the model to automatically spin around the z-axis after loading.
+            autostart: 1, // Usage: Setting to 1 will make the model load immediately once the page is ready, rather than waiting for a user to click the Play button.
+            cardboard: 0, // Usage: Start the viewer in stereoscopic VR Mode built for Google Cardboard and similar devices.
+            camera: 0, // Usage: Setting to 0 will skip the initial animation that occurs when a model is loaded, and immediately show the model in its default position.
+            preload: 1, // Usage: Setting to 1 will force all resources (textures) to download before the scene is displayed.
+            ui_stop: 0, // Usage: Setting to 0 will hide the "Disable Viewer" button in the top right so that users cannot stop the 3D render once it is started.
+            transparent: 0, // Usage: Setting to 1 will make the model's background transparent
+            ui_animations: 0, // Usage: Setting to 0 will hide the animation menu and timeline.
+            ui_annotations: 1, // Usage: Setting to 0 will hide the Annotation menu.
+            ui_controls: 1, // Usage: Setting to 0 will hide all the viewer controls at the bottom of the viewer (Help, Settings, Inspector, VR, Fullscreen, Annotations, and Animations).
+            ui_fullscreen: 0, // Usage: Setting to 0 will hide the Fullscreen button.
+            ui_general_controls: 1, // Usage: Setting to 0 will hide main control buttons in the bottom right of the viewer (Help, Settings, Inspector, VR, Fullscreen).
+            ui_help: 1, // Usage: Setting to 0 will hide the Help button.
+            ui_hint: 1, // Usage: Setting to 0 will always hide the viewer hint animation ("click & hold to rotate"). Setting to 1 will show the hint the first time per browser session (using a cookie). Setting to 2 will always show the hint.
+            ui_infos: 0, // Usage: Setting to 0 will hide the model info bar at the top of the viewer.
+            ui_inspector: 0, // Usage: Setting to 0 will hide the inspector button.
+            ui_settings: 0, // Usage: Setting to 0 will hide the Settings button.
+            ui_vr: 0, // Usage: Setting to 0 will hide the View in VR button.
+            ui_watermark_link: 0, // Usage: Setting to 0 remove the link from the Sketchfab logo watermark.
+            ui_color: '00a8c0', // Usage: Setting to a hexidecimal color code (without the #) or a HTML color name will change the color of the viewer loading bar.
+            ui_watermark: 0, // Usage: Setting to 0 remove the Sketchfab logo watermark.
+            success: success,
+            error: error
+        });
+        
+        // Function to remove all annotations from the model
+		function removeAnnotations(){
+			// remove the annotations
+			window.console.log('Remove annotations function call');
+			//unselect open annotation first
+			api.unselectAnnotation(function(err) {
+				if (!err) {
+					window.console.log('Unselected annotations');
+				}
+			});
+			//remove annotations
+			api.removeAllAnnotations(function(err) {
+				if (!err) {
+					window.console.log('Removed all annotations');
+				}else{
+					window.console.log(err);
+				}
+			});
+		}
+        
+        // Function to switch the view in a two-room model; moves the camera position from one room to another
+        // receives the 'view' value from the button that is pressed to change the view (managed in initGui)
+        // camera location values need to be changed to suit the model
+        // includes adding/removing annotations - defined in arrays above
+        function switchView(view){
+            window.console.log('switch view');
+
+			removeAnnotations();
+            
+            if(view == "ensuite bathroom"){
+                // switch to bathroom
+                api.setCameraLookAt([-8.2, 0.92, 1], [-2, 2.5, 1.0556], 1);
+                window.console.log('bathroom switch');
+
+				//add bathroom annotations
+				annotationsBath.map(function (annotation) {
+            		api.createAnnotationFromWorldPosition(annotation.WorldPosition, annotation.eye, annotation.target, annotation.title, annotation.text, function () {});
+				});
+
+                //switch button wording
+                initGui("bedroom");
+                window.console.log('button change to bedroom');
+
+            } else if (view == "bedroom"){
+                // switch to bedroom
+                api.setCameraLookAt([-0.5, -1.5, 1.4436990081600753], [1.0486203286387108, -0.039091386162281076, 1.143355269809609], 1);
+                window.console.log('bedroom switch');
+
+				//add bedroom annotations
+				annotationsBed.map(function (annotation) {
+            		api.createAnnotationFromWorldPosition(annotation.WorldPosition, annotation.eye, annotation.target, annotation.title, annotation.text, function () {});
+				});
+
+                //switch button wording
+                initGui("ensuite bathroom");
+                window.console.log('button change to bathroom');
+                
+            }else{
+                window.console.log('view was neither: (' + view + ')');
+            }
+        }
+        
+        // Define camera limits that suit your model
+        function cameraLimits(limits){
+            api.setCameraConstraints(limits, () => {
+                window.console.log('Camera constraints set');
+            });
+            api.setEnableCameraConstraints(true, {}, function(err) {
+                if (!err) {
+                    window.console.log('Camera constraints enabled');
+                }
+            });
+        }
+        
+        // set up the in-page viewer gui, including a custom button for switching views
+        function initGui(view) {
+            var controls = document.getElementById('controls');
+            var buttonsText = '';
+			buttonsText += '<button id="switchview" onclick="switchView(\'' + view + '\')">View ' + view + '</button>';
+            controls.innerHTML = buttonsText;
+        }
+	</script>
+    <!-- ************************************** END Sketchfab Code*****************************-->
+    <!-- **************************************************************************************-->
+
+</body>
+</html>
